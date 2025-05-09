@@ -8,11 +8,11 @@
 <link href="index.css" rel="stylesheet">
 </head>
 <body>
-<div id="wb_PhotoGallery1" style="position:absolute;left:102px;top:126px;width:612px;height:285px;z-index:0;">
+<div id="wb_PhotoGallery1" style="position:absolute;left:97px;top:110px;width:612px;height:285px;z-index:0;">
 <div id="PhotoGallery1">
 <div class="thumbnails">
 <?php
-   $images_folder = "images/";
+   $images_folder = "gallery/";
    $html = "";
    $images = array();
    $dir = opendir($images_folder);
@@ -44,5 +44,6 @@
 ?>
 </div>
 </div></div>
+<img src="images/img0001.png" id="Banner1" alt="Untitled Page" style="border-width:0;position:absolute;left:71px;top:25px;width:655px;height:48px;z-index:1;" width="655" height="48">
 </body>
 </html>
