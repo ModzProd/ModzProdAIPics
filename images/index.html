@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Page</title>
+<meta name="generator" content="WYSIWYG Web Builder 20 - https://www.wysiwygwebbuilder.com">
+<link href="modzprodaipics.css" rel="stylesheet">
+<link href="index.css" rel="stylesheet">
+</head>
+<body>
+<div id="wb_PhotoGallery1" style="position:absolute;left:97px;top:110px;width:612px;height:285px;z-index:0;">
+<div id="PhotoGallery1">
+<div class="thumbnails">
+<?php
+   $images_folder = "images/";
+   $html = "";
+   $images = array();
+   $dir = opendir($images_folder);
+   while ($filename = readdir($dir))
+   {
+      $ext = pathinfo($filename, PATHINFO_EXTENSION);
+      $ext = strtolower($ext);
+      if ($ext == 'gif' || $ext == 'jpeg' || $ext == 'jpg' || $ext == 'png' || $ext == 'webp')
+      {
+         $images[] = $filename;
+      }
+   }
+   closedir($dir);
+   sort($images);
+   $images = array_slice($images, 0, 6);
+   $count = 0;
+   foreach($images as $filename)
+   {
+      $count++;
+      $exif = exif_read_data($images_folder.$filename);
+      $title = trim(isset($exif['ImageDescription']) ? $exif['ImageDescription'] : '');
+      $html .= "<div class=\"thumbnail\"><a href=\"$images_folder$filename\"><img alt=\"$title\" id=\"PhotoGallery1_img$count\" src=\"$images_folder$filename\" title=\"$title\"></a></div>\r\n";
+      if ($count % 4 == 0)
+      {
+         $html .= "<div class=\"clearfix visible-col4\"></div>";
+      }
+   }
+   echo $html;
+?>
+</div>
+</div></div>
+<img src="images/img0001.png" id="Banner1" alt="Untitled Page" style="border-width:0;position:absolute;left:71px;top:25px;width:655px;height:48px;z-index:1;" width="655" height="48">
+</body>
+</html>
