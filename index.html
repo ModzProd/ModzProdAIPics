@@ -6,23 +6,13 @@
 <meta name="generator" content="WYSIWYG Web Builder 20 - https://www.wysiwygwebbuilder.com">
 <link href="modzprodaipics.css" rel="stylesheet">
 <link href="index.css" rel="stylesheet">
-<script src="jquery-3.7.1.min.js"></script>
-<link rel="stylesheet" href="magnificpopup/magnific-popup.css">
-<script src="magnificpopup/jquery.magnific-popup.min.js"></script>
-<script>
-$(document).ready(function()
-{
-   $("a[data-rel='PhotoGallery1']").attr('rel', 'PhotoGallery1');
-   $("#PhotoGallery1").magnificPopup({delegate:'a', type:'image', zoom: { enabled: true, duration: 300, easing: 'ease-in-out' }, gallery: {enabled: true, navigateByImgClick: true}});
-});
-</script>
 </head>
 <body>
 <div id="wb_PhotoGallery1" style="position:absolute;left:97px;top:110px;width:612px;height:285px;z-index:0;">
 <div id="PhotoGallery1">
 <div class="thumbnails">
 <?php
-   $images_folder = "gallery/";
+   $images_folder = "/gallery/";
    $html = "";
    $images = array();
    $dir = opendir($images_folder);
@@ -37,14 +27,14 @@ $(document).ready(function()
    }
    closedir($dir);
    sort($images);
-   $images = array_slice($images, 0, 6);
+   $images = array_slice($images, 0, 5);
    $count = 0;
    foreach($images as $filename)
    {
       $count++;
       $exif = exif_read_data($images_folder.$filename);
       $title = trim(isset($exif['ImageDescription']) ? $exif['ImageDescription'] : '');
-      $html .= "<div class=\"thumbnail\"><a href=\"$images_folder$filename\" data-rel=\"\" title=\"$title\"><img alt=\"$title\" id=\"PhotoGallery1_img$count\" src=\"$images_folder$filename\"><div class=\"caption\">$title</div></a></div>\r\n";
+      $html .= "<div class=\"thumbnail\"><a href=\"$images_folder$filename\"><img alt=\"$title\" id=\"PhotoGallery1_img$count\" src=\"$images_folder$filename\"><div class=\"caption\">$title</div></a></div>\r\n";
       if ($count % 4 == 0)
       {
          $html .= "<div class=\"clearfix visible-col4\"></div>";
