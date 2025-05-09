@@ -34,6 +34,48 @@ body
    text-align: center;
    vertical-align: top;
 }
+#PhotoGallery1 .caption
+{
+   color: #212529;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 16px;
+   font-style: normal;
+   margin: 0;
+   text-align: center;
+   text-decoration: none;
+   padding: 3px 0 0 0;
+   position: absolute;
+   left: 0;
+   top: 0;
+   width: 100%;
+   background-color: #FFFFFF;
+   box-sizing: border-box;
+   opacity: 0;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   height: 100%;
+   align-items: center;
+   transition: all 600ms linear;
+}
+#PhotoGallery1 .description
+{
+   color: #000000;
+   font-weight: normal;
+   font-size: 11px;
+   font-style: normal;
+   text-align: center;
+}
+#PhotoGallery1 .thumbnail a
+{
+   display: block;
+   position: relative;
+}
+#PhotoGallery1 .thumbnail a:hover .caption
+{
+   opacity: 1
+}
 #PhotoGallery1 .thumbnail img
 {
    border: 0px solid #DEE2E6;
