@@ -20,56 +20,22 @@ document.addEventListener('DOMContentLoaded', function(event)
 <div id="wb_SlideShow1" style="position:absolute;left:1px;top:196px;width:750px;height:198px;z-index:1;">
 <div id="SlideShow1" data-bs-ride="carousel" class="carousel slide">
 <div class="carousel-inner">
-<?php
-   $images_folder = "https://github.com/JKTypeface/ModzProdAIPics/tree/main/system/gallery/";
-   $html = "";
-   $images = array();
-   $dir = opendir($images_folder);
-   while ($filename = readdir($dir))
-   {
-      $ext = pathinfo($filename, PATHINFO_EXTENSION);
-      $ext = strtolower($ext);
-      if ($ext == 'gif' || $ext == 'jpeg' || $ext == 'jpg' || $ext == 'png' || $ext == 'webp')
-      {
-         $images[] = $filename;
-      }
-   }
-   closedir($dir);
-   sort($images);
-   $images = array_slice($images, 0, 3);
-   $active = true;
-   $close = false;
-   $image = 0;
-   foreach($images as $filename)
-   {
-      $exif = exif_read_data($images_folder.$filename);
-      $title = trim(isset($exif['ImageDescription']) ? $exif['ImageDescription'] : '');
-      if ($image == 0)
-      {
-         $html .= "<div class=\"carousel-item";
-         if ($active)
-         {
-            $html .= " active";
-            $active = false;
-         }
-         $html .= "\"><div class=\"thumbnails\">";
-         $close = true;
-      }
-      $html .= "<div class=\"thumbnail\"><img class=\"image\" src=\"$images_folder$filename\" alt=\"$title\" title=\"$title\"></div>\n";
-      $image++;
-      if ($image == 5)
-      {
-         $image = 0;
-         $close = false;
-         $html .= "</div></div>";
-      }
-   }
-   if ($close)
-   {
-      $html .= "</div></div>";
-   }
-   echo $html;
-?>
+<div class="carousel-item active">
+<div class="thumbnails">
+<div class="thumbnail">
+<img class="image" width="1024" height="1024" src="images/LogotypeMesopotamian.png" alt="" title="">
+</div>
+<div class="thumbnail">
+<img class="image" width="1024" height="1024" src="images/LogotypeAncient.png" alt="" title="">
+</div>
+<div class="thumbnail">
+<img class="image" width="1024" height="1024" src="images/Logo Retrô do Chicago Show.png" alt="" title="">
+</div>
+<div class="thumbnail">
+<img class="image" width="1024" height="1024" src="images/Logotipo Retro Chicago Show.png" alt="" title="">
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="SlideShow1_back" style="position:absolute;left:4px;top:41%;width:32px;height:32px;z-index:999"><a href="#SlideShow1" data-bs-slide="prev" class="carousel-control-prev" role="button"><span class="carousel-control-prev-icon" aria-hidden="true"></span></a></div>

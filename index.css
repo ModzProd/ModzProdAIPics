@@ -112,10 +112,6 @@ body
    margin-left: auto;
    margin-right: auto;
 }
-#SlideShow1 .image:not(:first-child)
-{
-   display: none;
-}
 #wb_SlideShow1 .carousel-control-next, #wb_SlideShow1 .carousel-control-prev
 {
    cursor: pointer;
