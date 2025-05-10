@@ -6,13 +6,22 @@
 <meta name="generator" content="WYSIWYG Web Builder 20 - https://www.wysiwygwebbuilder.com">
 <link href="modzprodaipics.css" rel="stylesheet">
 <link href="index.css" rel="stylesheet">
+<script src="popper.min.js"></script>
+<script src="bootstrap.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(event)
+{
+   var SlideShow1 = new bootstrap.Carousel("#SlideShow1", {interval:3000, ride: true});
+});
+</script>
 </head>
 <body>
-<div id="wb_PhotoGallery1" style="position:absolute;left:97px;top:110px;width:612px;height:285px;z-index:0;">
-<div id="PhotoGallery1">
-<div class="thumbnails">
+<img src="images/img0001.png" id="Banner1" alt="Untitled Page" style="border-width:0;position:absolute;left:71px;top:25px;width:655px;height:48px;z-index:0;" width="655" height="48">
+<div id="wb_SlideShow1" style="position:absolute;left:1px;top:196px;width:750px;height:198px;z-index:1;">
+<div id="SlideShow1" data-bs-ride="carousel" class="carousel slide">
+<div class="carousel-inner">
 <?php
-   $images_folder = "https://github.com/JKTypeface/ModzProdAIPics/tree/main/gallery/";
+   $images_folder = "gallery/";
    $html = "";
    $images = array();
    $dir = opendir($images_folder);
@@ -27,23 +36,44 @@
    }
    closedir($dir);
    sort($images);
-   $images = array_slice($images, 0, 5);
-   $count = 0;
+   $images = array_slice($images, 0, 3);
+   $active = true;
+   $close = false;
+   $image = 0;
    foreach($images as $filename)
    {
-      $count++;
       $exif = exif_read_data($images_folder.$filename);
       $title = trim(isset($exif['ImageDescription']) ? $exif['ImageDescription'] : '');
-      $html .= "<div class=\"thumbnail\"><a href=\"$images_folder$filename\"><img alt=\"$title\" id=\"PhotoGallery1_img$count\" src=\"$images_folder$filename\"><div class=\"caption\">$title</div></a></div>\r\n";
-      if ($count % 4 == 0)
+      if ($image == 0)
       {
-         $html .= "<div class=\"clearfix visible-col4\"></div>";
+         $html .= "<div class=\"carousel-item";
+         if ($active)
+         {
+            $html .= " active";
+            $active = false;
+         }
+         $html .= "\"><div class=\"thumbnails\">";
+         $close = true;
       }
+      $html .= "<div class=\"thumbnail\"><img class=\"image\" src=\"$images_folder$filename\" alt=\"$title\" title=\"$title\"></div>\n";
+      $image++;
+      if ($image == 5)
+      {
+         $image = 0;
+         $close = false;
+         $html .= "</div></div>";
+      }
+   }
+   if ($close)
+   {
+      $html .= "</div></div>";
    }
    echo $html;
 ?>
 </div>
-</div></div>
-<img src="images/img0001.png" id="Banner1" alt="Untitled Page" style="border-width:0;position:absolute;left:71px;top:25px;width:655px;height:48px;z-index:1;" width="655" height="48">
+</div>
+<div id="SlideShow1_back" style="position:absolute;left:4px;top:41%;width:32px;height:32px;z-index:999"><a href="#SlideShow1" data-bs-slide="prev" class="carousel-control-prev" role="button"><span class="carousel-control-prev-icon" aria-hidden="true"></span></a></div>
+<div id="SlideShow1_next" style="position:absolute;right:4px;top:41%;width:32px;height:32px;z-index:999"><a href="#SlideShow1" data-bs-slide="next" class="carousel-control-next" role="button"><span class="carousel-control-next-icon" aria-hidden="true"></span></a></div>
+</div>
 </body>
 </html>
