@@ -7,13 +7,14 @@
 <link href="modzprodaipics.css" rel="stylesheet">
 <link href="page1.css" rel="stylesheet">
 <script src="jquery-3.7.1.min.js"></script>
-<link rel="stylesheet" href="magnificpopup/magnific-popup.css">
-<script src="magnificpopup/jquery.magnific-popup.min.js"></script>
+<link rel="stylesheet" href="galleria/theme/galleria.classic.min.css">
+<script src="galleria/galleria-1.5.4.min.js"></script>
+<script src="galleria/theme/galleria.classic.min.js"></script>
 <script>
 $(document).ready(function()
 {
    $("a[data-rel='PhotoGallery1']").attr('rel', 'PhotoGallery1');
-   $("#PhotoGallery1").magnificPopup({delegate:'a', type:'image', zoom: { enabled: true, duration: 300, easing: 'ease-in-out' }, gallery: {enabled: true, navigateByImgClick: true}});
+   $('#wb_PhotoGallery1 img').attr('title', '');$('#wb_PhotoGallery1').galleria({});
 });
 </script>
 </head>
