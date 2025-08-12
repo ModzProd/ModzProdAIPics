@@ -23,7 +23,7 @@ $(document).ready(function()
 <div id="PhotoGallery1">
 <div class="thumbnails">
 <?php
-   $images_folder = "/modzprodaipic/";
+   $images_folder = "\modzprodaipic/";
    $html = "";
    $images = array();
    $dir = opendir($images_folder);
@@ -41,7 +41,7 @@ $(document).ready(function()
    {
       return filemtime($images_folder . $b) - filemtime($images_folder . $a);
    });
-   $images = array_slice($images, 0, 210);
+   $images = array_slice($images, 0, 187);
    $count = 0;
    foreach($images as $filename)
    {
