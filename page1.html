@@ -18,23 +18,43 @@ $(document).ready(function()
 </script>
 </head>
 <body>
-<div id="wb_PhotoGallery1" style="position:absolute;left:59px;top:191px;width:580px;height:386px;z-index:0;">
+<div id="wb_PhotoGallery1" style="position:absolute;left:7px;top:55px;width:791px;height:1720px;z-index:0;">
 <div id="PhotoGallery1">
 <div class="thumbnails">
-<div class="thumbnail">
-<a href="images/Logo _Chicago Show_ Vintage Em Estilo.png" data-rel=""><img alt="" src="images/Logo _Chicago Show_ Vintage Em Estilo.png" class="image" width="187" height="187"></a>
-</div>
-<div class="thumbnail">
-<a href="images/Logo de Chicago Show.png" data-rel=""><img alt="" src="images/Logo de Chicago Show.png" class="image" width="187" height="187"></a>
-</div>
-<div class="thumbnail">
-<a href="images/Logo Retrô do Chicago Show.png" data-rel=""><img alt="" src="images/Logo Retrô do Chicago Show.png" class="image" width="187" height="187"></a>
-</div>
-<div class="clearfix visible-col3"></div>
-<div class="thumbnail">
-<a href="images/Logotipo Retro Chicago Show.png" data-rel=""><img alt="" src="images/Logotipo Retro Chicago Show.png" class="image" width="187" height="187"></a>
-</div>
-<div class="clearfix visible-col3"></div>
+<?php
+   $images_folder = "/modzprodaipic/";
+   $html = "";
+   $images = array();
+   $dir = opendir($images_folder);
+   while ($filename = readdir($dir))
+   {
+      $ext = pathinfo($filename, PATHINFO_EXTENSION);
+      $ext = strtolower($ext);
+      if ($ext == 'gif' || $ext == 'jpeg' || $ext == 'jpg' || $ext == 'png' || $ext == 'webp')
+      {
+         $images[] = $filename;
+      }
+   }
+   closedir($dir);
+   usort($images, function($a, $b) use ($images_folder)
+   {
+      return filemtime($images_folder . $b) - filemtime($images_folder . $a);
+   });
+   $images = array_slice($images, 0, 210);
+   $count = 0;
+   foreach($images as $filename)
+   {
+      $count++;
+      $exif = exif_read_data($images_folder.$filename);
+      $title = trim(isset($exif['ImageDescription']) ? $exif['ImageDescription'] : '');
+      $html .= "<div class=\"thumbnail\"><a href=\"$images_folder$filename\" data-rel=\"\" title=\"$title\"><img alt=\"$title\" id=\"PhotoGallery1_img$count\" src=\"$images_folder$filename\" title=\"$title\"></a></div>\r\n";
+      if ($count % 6 == 0)
+      {
+         $html .= "<div class=\"clearfix visible-col6\"></div>";
+      }
+   }
+   echo $html;
+?>
 </div>
 </div></div>
 </body>

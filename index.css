@@ -125,8 +125,8 @@ body
 #wb_SlideShow1 .carousel-control-next-icon, #wb_SlideShow1 .carousel-control-prev-icon
 {
    display: inline-block;
-   width: 32px;
-   height: 32px;
+   width: 40px;
+   height: 40px;
    background: transparent no-repeat center center;
    background-size: 100% 100%;
 }
@@ -138,9 +138,33 @@ body
 }
 #wb_SlideShow1 .carousel-control-prev-icon
 {
-   background: url('data:image/svg+xml,%3csvg%20style%3d%22fill:%23000000%22%20viewBox%3d%220%200%20128%20128%22%20version%3d%221.1%22%20xmlns%3d%22http://www.w3.org/2000/svg%22%3e%0d%0a%20%20%20%3cpath%20d%3d%22M85%2088%20L76%2097%20L43%2064%20L76%2031%20L85%2039%20L61%2064Z%20%22/%3e%0d%0a%3c/svg%3e%0d%0a') no-repeat center center;
+   background: url('data:image/svg+xml,%3csvg%20style%3d%22fill:%23000000%22%20viewBox%3d%220%200%20160%20160%22%20version%3d%221.1%22%20xmlns%3d%22http://www.w3.org/2000/svg%22%3e%0d%0a%20%20%20%3cpath%20d%3d%22M42%2073%20C41%2075%2c%2040%2078%2c%2040%2080%20L40%2080%20L40%2080%20C40%2083%2c%2041%2086%2c%2042%2088%20L102%20148%20L102%20148%20C105%20150%2c%20107%20150%2c%20110%20150%20C112%20150%2c%20115%20150%2c%20117%20148%20C119%20146%2c%20120%20143%2c%20120%20140%20C120%20138%2c%20119%20135%2c%20117%20133%20L64%2080%20L64%2080%20L117%2028%20L117%2028%20C119%2026%2c%20120%2023%2c%20120%2020%20C120%2018%2c%20119%2015%2c%20117%2013%20C115%2011%2c%20112%2010%2c%20110%2010%20C107%2010%2c%20105%2011%2c%20102%2013%20L42%2073Z%20%22/%3e%0d%0a%3c/svg%3e%0d%0a') no-repeat center center;
 }
 #wb_SlideShow1 .carousel-control-next-icon
 {
-   background: url('data:image/svg+xml,%3csvg%20style%3d%22fill:%23000000%22%20viewBox%3d%220%200%20128%20128%22%20version%3d%221.1%22%20xmlns%3d%22http://www.w3.org/2000/svg%22%3e%0d%0a%20%20%20%3cpath%20d%3d%22M43%2088%20L68%2064%20L43%2039%20L52%2031%20L85%2064%20L52%2097Z%20%22/%3e%0d%0a%3c/svg%3e%0d%0a') no-repeat center center;
+   background: url('data:image/svg+xml,%3csvg%20style%3d%22fill:%23000000%22%20viewBox%3d%220%200%20160%20160%22%20version%3d%221.1%22%20xmlns%3d%22http://www.w3.org/2000/svg%22%3e%0d%0a%20%20%20%3cpath%20d%3d%22M117%2073%20C119%2075%2c%20120%2078%2c%20120%2080%20L120%2080%20L120%2080%20C120%2083%2c%20119%2086%2c%20117%2088%20L57%20148%20L57%20148%20C55%20150%2c%2052%20150%2c%2050%20150%20C47%20150%2c%2045%20150%2c%2042%20148%20C41%20146%2c%2040%20143%2c%2040%20140%20C40%20138%2c%2041%20135%2c%2042%20133%20L96%2080%20L96%2080%20L42%2028%20L42%2028%20C41%2026%2c%2040%2023%2c%2040%2020%20C40%2018%2c%2041%2015%2c%2042%2013%20C45%2011%2c%2047%2010%2c%2050%2010%20C52%2010%2c%2055%2011%2c%2057%2013%20L117%2073Z%20%22/%3e%0d%0a%3c/svg%3e%0d%0a') no-repeat center center;
+}
+#Button1
+{
+   box-sizing: border-box;
+   line-height: 46px;
+   text-decoration: none;
+   vertical-align: top;
+   border: 1px solid #0D6EFD;
+   border-radius: 4px;
+   background-color: #0D6EFD;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 16px;
+   padding: 1px 6px 1px 6px;
+   text-align: center;
+   -webkit-appearance: none;
+   margin: 0;
+}
+#Button1:focus
+{
+   outline: 0;
 }
