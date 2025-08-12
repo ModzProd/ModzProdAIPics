@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<target_folders>
+	<filetype folder="images" extension="jpg">	</filetype>
+	<filetype folder="images" extension="gif">	</filetype>
+	<filetype folder="images" extension="png">	</filetype>
+	<filetype folder="images" extension="webp">	</filetype>
+</target_folders>
