@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>Untitled Page</title>
 <meta name="generator" content="WYSIWYG Web Builder 20 - https://www.wysiwygwebbuilder.com">
+<link href="https://fonts.googleapis.com/css?family=Noto+Sans:800&subset=latin,cyrillic,cyrillic-ext,devanagari,greek,greek-ext,latin-ext,vietnamese&display=swap" rel="stylesheet">
 <link href="modzprodaipics.css" rel="stylesheet">
 <link href="index.css" rel="stylesheet">
 <script src="popper.min.js"></script>
@@ -41,5 +42,72 @@ document.addEventListener('DOMContentLoaded', function(event)
 <div id="SlideShow1_next" style="position:absolute;right:2px;top:39%;width:40px;height:40px;z-index:999"><a href="#SlideShow1" data-bs-slide="next" class="carousel-control-next" role="button"><span class="carousel-control-next-icon" aria-hidden="true"></span></a></div>
 </div>
 <a id="Button1" href="./page1.html" style="position:absolute;left:89px;top:321px;width:170px;height:50px;z-index:1;">Submit</a>
+<div id="wb_Text1" style="position:absolute;left:63px;top:54px;width:222px;height:74px;z-index:2;">
+<span style="color:#000000;font-family:'Noto Sans';font-weight:800;font-size:27px;">NEWS</span></div>
+<div id="PhotoGallery1" style="position:absolute;left:24px;top:416px;width:946px;height:709px;z-index:3">
+<script>
+    // CONFIGURAÇÕES
+    const usuarioGithub = 'ModzProd';
+    const nomeRepositorio = 'ModzProdAIPics';
+    const pastaImagens = 'images/galeria'; 
+    const idDestino = 'PhotoGallery1';       // ID configurado no objeto HTML
+
+    // URL da API do GitHub
+    const url = `https://api.github.com/repos/${usuarioGithub}/${nomeRepositorio}/contents/${pastaImagens}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Tenta encontrar o container pelo ID
+            const container = document.getElementById(idDestino);
+            
+            if (!container) {
+                console.error('ERRO: Não encontrei nenhum objeto com ID "' + idDestino + '" na página.');
+                console.error('Lembre-se de usar o objeto "HTML" (</>) e não o objeto "Photo Gallery".');
+                return;
+            }
+
+            // Estilo do Container (Flexbox para alinhar fotos)
+            container.style.display = "flex";
+            container.style.flexWrap = "wrap";
+            container.style.gap = "15px";
+            container.style.justifyContent = "center";
+            container.style.width = "100%";
+
+            // Varre os arquivos retornados
+            data.forEach(file => {
+                // Verifica se é uma imagem
+                if (file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                    
+                    // Cria o link (abre a foto original ao clicar)
+                    const link = document.createElement('a');
+                    link.href = file.download_url;
+                    link.target = "_blank"; 
+
+                    // Cria a imagem de exibição (thumbnail)
+                    const img = document.createElement('img');
+                    img.src = file.download_url; 
+                    
+                    // Estilo das Imagens
+                    img.style.width = "200px"; 
+                    img.style.height = "200px";
+                    img.style.objectFit = "cover";
+                    img.style.borderRadius = "8px";
+                    img.style.boxShadow = "0 4px 6px rgba(0,0,0,0.3)";
+                    img.style.cursor = "pointer";
+                    img.style.transition = "transform 0.3s ease";
+                    
+                    // Efeito de Zoom ao passar o mouse
+                    img.onmouseover = function() { this.style.transform = "scale(1.05)"; };
+                    img.onmouseout = function() { this.style.transform = "scale(1)"; };
+
+                    // Adiciona à página
+                    link.appendChild(img);
+                    container.appendChild(link);
+                }
+            });
+        })
+        .catch(error => console.error('Erro ao carregar galeria:', error));
+</script></div>
 </body>
 </html>
