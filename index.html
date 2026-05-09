@@ -586,79 +586,119 @@
         })
         .catch(error => console.error('Erro ao carregar carrossel Netflix:', error));
 </script></div>
-<div id="html4" style="position:absolute;left:213px;top:92px;width:162px;height:52px;z-index:8">
+<div id="ivBotaoZip" style="position:absolute;left:213px;top:92px;width:162px;height:52px;z-index:8">
 <script>
-    // Configurações
+    // --- CONFIGURAÇÕES ---
     const usuarioGithub = 'ModzProd';
     const nomeRepositorio = 'ModzProdAIPics';
     const pastaImagens = 'images/galeria/logos/promotions';
-    const idBotao = 'wb_btnBaixarGaleria'; // Nome do objeto Botão que você criou
+    
+    // ID do objeto HTML vazio onde o botão vai aparecer (criado no Passo 2)
+    const idContainer = 'divBotaoZip'; 
 
-    // Evento ao clicar no botão
-    document.getElementById(idBotao).onclick = function() {
+    // --- CRIAÇÃO DO BOTÃO ---
+    const container = document.getElementById(idContainer);
+    
+    if (container) {
+        const btnDownload = document.createElement('button');
+        btnDownload.innerText = "📥 Baixar Toda a Galeria (ZIP)";
         
-        const btn = this;
-        const textoOriginal = btn.value;
-        
-        // Feedback visual no botão
-        btn.value = "Preparando... aguarde...";
-        btn.disabled = true;
+        // Estilo visual do botão (CSS inline)
+        btnDownload.style.display = "block";
+        btnDownload.style.width = "100%";
+        btnDownload.style.maxWidth = "300px";
+        btnDownload.style.margin = "20px auto";
+        btnDownload.style.padding = "15px";
+        btnDownload.style.backgroundColor = "#2e7d32"; // Verde
+        btnDownload.style.color = "white";
+        btnDownload.style.border = "none";
+        btnDownload.style.borderRadius = "8px";
+        btnDownload.style.fontSize = "16px";
+        btnDownload.style.fontWeight = "bold";
+        btnDownload.style.cursor = "pointer";
+        btnDownload.style.boxShadow = "0 4px 6px rgba(0,0,0,0.2)";
+        btnDownload.style.transition = "background 0.3s";
 
-        const url = `https://api.github.com/repos/${usuarioGithub}/${nomeRepositorio}/contents/${pastaImagens}`;
-        const zip = new JSZip(); // Inicia o objeto ZIP
+        // Efeito ao passar o mouse
+        btnDownload.onmouseenter = function() { this.style.backgroundColor = "#1b5e20"; };
+        btnDownload.onmouseleave = function() { this.style.backgroundColor = "#2e7d32"; };
 
-        fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            // Filtra apenas imagens
-            const imagens = data.filter(file => file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i));
+        // --- LÓGICA DE DOWNLOAD ---
+        btnDownload.onclick = function() {
+            
+            const textoOriginal = this.innerText;
+            const btn = this;
 
-            if (imagens.length === 0) {
-                alert("Pasta vazia!");
-                btn.value = textoOriginal;
-                btn.disabled = false;
-                return;
+            // Desabilita botão e mostra status
+            btn.disabled = true;
+            btn.innerText = "⏳ Baixando imagens...";
+            btn.style.backgroundColor = "#555";
+
+            const url = `https://api.github.com/repos/${usuarioGithub}/${nomeRepositorio}/contents/${pastaImagens}`;
+            const zip = new JSZip();
+
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const imagens = data.filter(file => file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i));
+
+                if (imagens.length === 0) {
+                    alert("Nenhuma imagem encontrada na pasta para compactar.");
+                    resetBotao(btn, textoOriginal);
+                    return;
+                }
+
+                // Promessa para baixar imagens
+                const promessas = imagens.map(file => {
+                    // Atualiza texto do botão com progresso (aproximado)
+                    const index = imagens.indexOf(file);
+                    btn.innerText = `⏳ Baixando (${index + 1}/${imagens.length})...`;
+                    
+                    return fetch(file.download_url)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            zip.file(file.name, blob);
+                        });
+                });
+
+                return Promise.all(promessas).then(() => {
+                    btn.innerText = "⏳ Compactando ZIP...";
+                    return zip.generateAsync({type:"blob"});
+                });
+            })
+            .then(function(content) {
+                if (!content) return; // Se deu erro antes de zipar
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = "Galeria-Completa-ModzProd.zip";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                alert("Download iniciado!");
+                resetBotao(btn, textoOriginal);
+            })
+            .catch(function(error) {
+                console.error(error);
+                alert("Erro ao gerar ZIP. Tente novamente.");
+                resetBotao(btn, textoOriginal);
+            });
+
+            function resetBotao(b, texto) {
+                b.disabled = false;
+                b.innerText = texto;
+                b.style.backgroundColor = "#2e7d32";
             }
+        };
 
-            // Promessa para baixar cada imagem individualmente
-            const promessas = imagens.map(file => {
-                btn.value = `Baixando imagens... (${imagens.indexOf(file) + 1}/${imagens.length})`;
-                
-                return fetch(file.download_url)
-                    .then(res => res.blob()) // Converte a imagem em dados binários
-                    .then(blob => {
-                        // Adiciona o binário ao ZIP com o nome original do arquivo
-                        zip.file(file.name, blob);
-                    });
-            });
+        // Insere o botão na div vazia
+        container.appendChild(btnDownload);
 
-            // Quando todas as imagens forem baixadas e zipadas
-            return Promise.all(promessas).then(() => {
-                btn.value = "Compactando...";
-                return zip.generateAsync({type:"blob"});
-            });
-        })
-        .then(function(content) {
-            // Cria um link invisível para fazer o download
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(content);
-            link.download = "PMPromotionsPack-ModzProd.zip";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            alert("Download iniciado com sucesso!");
-            btn.value = textoOriginal;
-            btn.disabled = false;
-        })
-        .catch(function(error) {
-            console.error(error);
-            alert("Erro ao gerar ZIP. Verifique o console.");
-            btn.value = textoOriginal;
-            btn.disabled = false;
-        });
-    };
+    } else {
+        console.error('Erro: Elemento divBotaoZip não encontrado. Crie um objeto HTML com esse ID.');
+    }
 </script></div>
-<a id="wb_btnBaixarGaleria" href="" style="position:absolute;left:475px;top:59px;width:126px;height:47px;z-index:9;">Button</a>
+<a id="Button1" href="" style="position:absolute;left:475px;top:59px;width:126px;height:47px;z-index:9;">Button</a>
 </body>
 </html>
