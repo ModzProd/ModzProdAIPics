@@ -67,6 +67,10 @@ body
 }
 #divBotaoZip
 {
+   box-sizing: border-box;
+   line-height: 43px;
+   text-decoration: none;
+   vertical-align: top;
    border: 1px solid #0D6EFD;
    border-radius: 4px;
    background-color: #0D6EFD;
