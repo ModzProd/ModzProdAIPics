@@ -6,7 +6,7 @@ on:
     branches: [ "main", "master" ]
     # O importante aqui: Só roda se mudar algo dentro da pasta de imagens
     paths:
-      - 'images/galeria/**'
+      - 'images/galeria/logos/promotions**'
 
 # Permissão para gravar o arquivo ZIP de volta no repositório
 permissions:
@@ -23,7 +23,7 @@ jobs:
 
     # 2. Usa o utilitário 'zip' do Linux para compactar a pasta
     - name: Compactar galeria
-      run: zip -r galeria.zip images/galeria/logos/promotions
+      run: zip -r galeria.zip images/galeria/
 
     # 3. Faz o commit do arquivo ZIP de volta para o repositório
     - name: Commit ZIP
