@@ -7,36 +7,71 @@
 <link href="https://fonts.googleapis.com/css?family=Noto+Sans:800&subset=latin,cyrillic,cyrillic-ext,devanagari,greek,greek-ext,latin-ext,vietnamese&display=swap" rel="stylesheet">
 <link href="modzprodaipics.css" rel="stylesheet">
 <link href="page1.css" rel="stylesheet">
-<script src="jquery-3.7.1.min.js"></script>
-<link rel="stylesheet" href="galleria/theme/galleria.classic.min.css">
-<script src="galleria/galleria-1.5.4.min.js"></script>
-<script src="galleria/theme/galleria.classic.min.js"></script>
-<script>
-$(document).ready(function()
-{
-   $("a[data-rel='PhotoGallery1']").attr('rel', 'PhotoGallery1');
-   $('#wb_PhotoGallery1 img').attr('title', '');$('#wb_PhotoGallery1').galleria({});
-});
-</script>
 </head>
 <body>
-<div id="wb_PhotoGallery1" style="position:absolute;left:7px;top:55px;width:791px;height:203px;z-index:0;">
-<div id="PhotoGallery1">
-<div class="thumbnails">
-<div class="thumbnail">
-<a href="images/Logo _Chicago Show_ Vintage Em Estilo.png" data-rel="" title="Logo _Chicago Show_ Vintage Em Estilo"><img alt="" src="images/tn_Logo _Chicago Show_ Vintage Em Estilo.png" class="image" title="Logo _Chicago Show_ Vintage Em Estilo" width="191" height="191"></a>
-</div>
-<div class="thumbnail">
-<a href="images/Logo de Chicago Show.png" data-rel="" title="Logo de Chicago Show"><img alt="" src="images/tn_Logo de Chicago Show.png" class="image" title="Logo de Chicago Show" width="191" height="191"></a>
-</div>
-<div class="thumbnail">
-<a href="images/Logo Retrô do Chicago Show.png" data-rel="" title="Logo Retrô do Chicago Show"><img alt="" src="images/tn_Logo Retrô do Chicago Show.png" class="image" title="Logo Retrô do Chicago Show" width="191" height="191"></a>
-</div>
-<div class="thumbnail">
-<a href="images/Logotipo Retro Chicago Show.png" data-rel="" title="Logotipo Retro Chicago Show"><img alt="" src="images/tn_Logotipo Retro Chicago Show.png" class="image" title="Logotipo Retro Chicago Show" width="191" height="191"></a>
-</div>
-<div class="clearfix visible-col4"></div>
-</div>
-</div></div>
+<div id="PhotoGallery1" style="position:absolute;left:0px;top:0px;width:100%;height:709px;overflow:scroll;z-index:0">
+<script>
+    // CONFIGURAÇÕES
+    const usuarioGithub = 'ModzProd';
+    const nomeRepositorio = 'ModzProdAIPics';
+    const pastaImagens = 'images/galeria'; 
+    const idDestino = 'PhotoGallery1';       // ID configurado no objeto HTML
+
+    // URL da API do GitHub
+    const url = `https://api.github.com/repos/${usuarioGithub}/${nomeRepositorio}/contents/${pastaImagens}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Tenta encontrar o container pelo ID
+            const container = document.getElementById(idDestino);
+            
+            if (!container) {
+                console.error('ERRO: Não encontrei nenhum objeto com ID "' + idDestino + '" na página.');
+                console.error('Lembre-se de usar o objeto "HTML" (</>) e não o objeto "Photo Gallery".');
+                return;
+            }
+
+            // Estilo do Container (Flexbox para alinhar fotos)
+            container.style.display = "flex";
+            container.style.flexWrap = "wrap";
+            container.style.gap = "15px";
+            container.style.justifyContent = "center";
+            container.style.width = "100%";
+
+            // Varre os arquivos retornados
+            data.forEach(file => {
+                // Verifica se é uma imagem
+                if (file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                    
+                    // Cria o link (abre a foto original ao clicar)
+                    const link = document.createElement('a');
+                    link.href = file.download_url;
+                    link.target = "_blank"; 
+
+                    // Cria a imagem de exibição (thumbnail)
+                    const img = document.createElement('img');
+                    img.src = file.download_url; 
+                    
+                    // Estilo das Imagens
+                    img.style.width = "150px"; 
+                    img.style.height = "150px";
+                    img.style.objectFit = "cover";
+                    img.style.borderRadius = "8px";
+                    img.style.cursor = "pointer";
+                    img.style.transition = "transform 0.3s ease";
+                    
+                    // Efeito de Zoom ao passar o mouse
+                    img.onmouseover = function() { this.style.transform = "scale(1.05)"; };
+                    img.onmouseout = function() { this.style.transform = "scale(1)"; };
+
+                    // Adiciona à página
+                    link.appendChild(img);
+                    container.appendChild(link);
+                }
+            });
+        })
+        .catch(error => console.error('Erro ao carregar galeria:', error));
+</script></div>
 </body>
 </html>

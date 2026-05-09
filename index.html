@@ -44,70 +44,110 @@ document.addEventListener('DOMContentLoaded', function(event)
 <a id="Button1" href="./page1.html" style="position:absolute;left:89px;top:321px;width:170px;height:50px;z-index:1;">Submit</a>
 <div id="wb_Text1" style="position:absolute;left:63px;top:54px;width:222px;height:74px;z-index:2;">
 <span style="color:#000000;font-family:'Noto Sans';font-weight:800;font-size:27px;">NEWS</span></div>
-<div id="PhotoGallery1" style="position:absolute;left:24px;top:416px;width:946px;height:709px;z-index:3">
+<div id="PhotoGallery1" style="position:absolute;left:0px;top:382px;width:100%;height:709px;overflow:scroll;z-index:3">
 <script>
     // CONFIGURAÇÕES
     const usuarioGithub = 'ModzProd';
     const nomeRepositorio = 'ModzProdAIPics';
     const pastaImagens = 'images/galeria'; 
-    const idDestino = 'PhotoGallery1';       // ID configurado no objeto HTML
+    const idDestino = 'PhotoGallery1';       // ID do seu objeto HTML no WWB
 
-    // URL da API do GitHub
     const url = `https://api.github.com/repos/${usuarioGithub}/${nomeRepositorio}/contents/${pastaImagens}`;
 
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            // Tenta encontrar o container pelo ID
-            const container = document.getElementById(idDestino);
+            // Filtra apenas imagens
+            const imagens = data.filter(file => file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i));
             
-            if (!container) {
-                console.error('ERRO: Não encontrei nenhum objeto com ID "' + idDestino + '" na página.');
-                console.error('Lembre-se de usar o objeto "HTML" (</>) e não o objeto "Photo Gallery".');
-                return;
-            }
+            if (imagens.length === 0) return;
 
-            // Estilo do Container (Flexbox para alinhar fotos)
+            const container = document.getElementById(idDestino);
+            if (!container) return;
+
+            // --- 1. ESTILOS DO CONTAINER (Wrapper) ---
             container.style.display = "flex";
-            container.style.flexWrap = "wrap";
-            container.style.gap = "15px";
+            container.style.alignItems = "center";
             container.style.justifyContent = "center";
+            container.style.position = "relative"; // Necessário para posicionar os botões
             container.style.width = "100%";
+            container.style.maxWidth = "900px";   // Largura máxima do carrossel
+            container.style.height = "500px";     // Altura fixa do carrossel
+            container.style.margin = "0 auto";
+            container.style.backgroundColor = "#f0f0f0";
+            container.style.borderRadius = "10px";
+            container.style.overflow = "hidden";  // Corta imagem se for maior que a caixa
 
-            // Varre os arquivos retornados
-            data.forEach(file => {
-                // Verifica se é uma imagem
-                if (file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-                    
-                    // Cria o link (abre a foto original ao clicar)
-                    const link = document.createElement('a');
-                    link.href = file.download_url;
-                    link.target = "_blank"; 
+            // --- 2. ELEMENTO DA IMAGEM PRINCIPAL ---
+            const mainImg = document.createElement('img');
+            mainImg.style.width = "100%";
+            mainImg.style.height = "100%";
+            mainImg.style.objectFit = "contain"; // Ajusta a imagem sem cortar (pode usar "cover" para preencher tudo)
+            mainImg.style.transition = "opacity 0.4s ease-in-out";
+            container.appendChild(mainImg);
 
-                    // Cria a imagem de exibição (thumbnail)
-                    const img = document.createElement('img');
-                    img.src = file.download_url; 
-                    
-                    // Estilo das Imagens
-                    img.style.width = "200px"; 
-                    img.style.height = "200px";
-                    img.style.objectFit = "cover";
-                    img.style.borderRadius = "8px";
-                    img.style.boxShadow = "0 4px 6px rgba(0,0,0,0.3)";
-                    img.style.cursor = "pointer";
-                    img.style.transition = "transform 0.3s ease";
-                    
-                    // Efeito de Zoom ao passar o mouse
-                    img.onmouseover = function() { this.style.transform = "scale(1.05)"; };
-                    img.onmouseout = function() { this.style.transform = "scale(1)"; };
+            // --- 3. CONTROLES (Botões) ---
+            const criarBotao = (texto, posicao) => {
+                const btn = document.createElement('button');
+                btn.innerText = texto;
+                btn.style.position = "absolute";
+                btn.style[posicao] = "20px";
+                btn.style.top = "50%";
+                btn.style.transform = "translateY(-50%)";
+                btn.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+                btn.style.border = "none";
+                btn.style.borderRadius = "50%";
+                btn.style.width = "50px";
+                btn.style.height = "50px";
+                btn.style.fontSize = "20px";
+                btn.style.cursor = "pointer";
+                btn.style.zIndex = "10";
+                btn.style.fontWeight = "bold";
+                
+                // Efeito hover
+                btn.onmouseover = function() { this.style.backgroundColor = "white"; };
+                btn.onmouseout = function() { this.style.backgroundColor = "rgba(255, 255, 255, 0.7)"; };
+                
+                container.appendChild(btn);
+                return btn;
+            };
 
-                    // Adiciona à página
-                    link.appendChild(img);
-                    container.appendChild(link);
-                }
-            });
+            const btnPrev = criarBotao("❮", "left");
+            const btnNext = criarBotao("❯", "right");
+
+            // --- 4. LÓGICA DE NAVEGAÇÃO ---
+            let indiceAtual = 0;
+
+            const atualizarImagem = () => {
+                // Efeito de Fade Out -> Troca -> Fade In
+                mainImg.style.opacity = "0";
+                
+                setTimeout(() => {
+                    mainImg.src = imagens[indiceAtual].download_url;
+                    mainImg.onload = () => {
+                        mainImg.style.opacity = "1";
+                    };
+                }, 300); // Espera o tempo da transição de opacidade
+            };
+
+            // Evento Próximo
+            btnNext.onclick = () => {
+                indiceAtual = (indiceAtual + 1) % imagens.length; // Volta pro 0 se chegar no fim
+                atualizarImagem();
+            };
+
+            // Evento Anterior
+            btnPrev.onclick = () => {
+                indiceAtual = (indiceAtual - 1 + imagens.length) % imagens.length; // Vai pro último se estiver no 0
+                atualizarImagem();
+            };
+
+            // --- 5. INICIALIZAÇÃO ---
+            // Carrega a primeira imagem
+            mainImg.src = imagens[0].download_url;
+
         })
-        .catch(error => console.error('Erro ao carregar galeria:', error));
+        .catch(error => console.error('Erro ao carregar carrossel:', error));
 </script></div>
 </body>
 </html>
