@@ -585,5 +585,79 @@
         })
         .catch(error => console.error('Erro ao carregar carrossel Netflix:', error));
 </script></div>
+<div id="wb_btnBaixarGaleria" style="position:absolute;left:213px;top:92px;width:162px;height:52px;z-index:8">
+<script>
+    // Configurações
+    const usuarioGithub = 'ModzProd';
+    const nomeRepositorio = 'ModzProdAIPics';
+    const pastaImagens = 'images/galeria/logos/promotions';
+    const idBotao = 'wb_btnBaixarGaleria'; // Nome do objeto Botão que você criou
+
+    // Evento ao clicar no botão
+    document.getElementById(idBotao).onclick = function() {
+        
+        const btn = this;
+        const textoOriginal = btn.value;
+        
+        // Feedback visual no botão
+        btn.value = "Preparando... aguarde...";
+        btn.disabled = true;
+
+        const url = `https://api.github.com/repos/${usuarioGithub}/${nomeRepositorio}/contents/${pastaImagens}`;
+        const zip = new JSZip(); // Inicia o objeto ZIP
+
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Filtra apenas imagens
+            const imagens = data.filter(file => file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i));
+
+            if (imagens.length === 0) {
+                alert("Pasta vazia!");
+                btn.value = textoOriginal;
+                btn.disabled = false;
+                return;
+            }
+
+            // Promessa para baixar cada imagem individualmente
+            const promessas = imagens.map(file => {
+                btn.value = `Baixando imagens... (${imagens.indexOf(file) + 1}/${imagens.length})`;
+                
+                return fetch(file.download_url)
+                    .then(res => res.blob()) // Converte a imagem em dados binários
+                    .then(blob => {
+                        // Adiciona o binário ao ZIP com o nome original do arquivo
+                        zip.file(file.name, blob);
+                    });
+            });
+
+            // Quando todas as imagens forem baixadas e zipadas
+            return Promise.all(promessas).then(() => {
+                btn.value = "Compactando...";
+                return zip.generateAsync({type:"blob"});
+            });
+        })
+        .then(function(content) {
+            // Cria um link invisível para fazer o download
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(content);
+            link.download = "PMPromotionsPack-ModzProd.zip";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert("Download iniciado com sucesso!");
+            btn.value = textoOriginal;
+            btn.disabled = false;
+        })
+        .catch(function(error) {
+            console.error(error);
+            alert("Erro ao gerar ZIP. Verifique o console.");
+            btn.value = textoOriginal;
+            btn.disabled = false;
+        });
+    };
+</script></div>
+<input type="submit" id="Button1" name="" value="Submit" style="position:absolute;left:475px;top:59px;width:126px;height:47px;z-index:9;">
 </body>
 </html>
