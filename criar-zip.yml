@@ -1,0 +1,35 @@
+name: Criar ZIP da Galeria
+
+# Quando rodar? Sempre que houver um push na branch main
+on:
+  push:
+    branches: [ "main", "master" ]
+    # O importante aqui: Só roda se mudar algo dentro da pasta de imagens
+    paths:
+      - 'images/galeria/**'
+
+# Permissão para gravar o arquivo ZIP de volta no repositório
+permissions:
+  contents: write
+
+jobs:
+  build-zip:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. Baixa todo o código do repositório
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    # 2. Usa o utilitário 'zip' do Linux para compactar a pasta
+    - name: Compactar galeria
+      run: zip -r galeria.zip images/galeria/logos/promotions
+
+    # 3. Faz o commit do arquivo ZIP de volta para o repositório
+    - name: Commit ZIP
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add galeria.zip
+        git commit -m "Atualização automática do ZIP da galeria" || exit 0
+        git push
