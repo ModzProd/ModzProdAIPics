@@ -50,104 +50,141 @@ document.addEventListener('DOMContentLoaded', function(event)
     const usuarioGithub = 'ModzProd';
     const nomeRepositorio = 'ModzProdAIPics';
     const pastaImagens = 'images/galeria'; 
-    const idDestino = 'PhotoGallery1';       // ID do seu objeto HTML no WWB
+    const idDestino = 'PhotoGallery1';       // ID do seu objeto HTML
 
     const url = `https://api.github.com/repos/${usuarioGithub}/${nomeRepositorio}/contents/${pastaImagens}`;
 
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            // Filtra apenas imagens
+            // Filtra imagens
             const imagens = data.filter(file => file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i));
-            
             if (imagens.length === 0) return;
 
             const container = document.getElementById(idDestino);
             if (!container) return;
 
-            // --- 1. ESTILOS DO CONTAINER (Wrapper) ---
-            container.style.display = "flex";
-            container.style.alignItems = "center";
-            container.style.justifyContent = "center";
-            container.style.position = "relative"; // Necessário para posicionar os botões
+            // --- 1. CONTAINER PRINCIPAL (Linha da Netflix) ---
+            container.style.position = "relative";
             container.style.width = "100%";
-            container.style.maxWidth = "900px";   // Largura máxima do carrossel
-            container.style.height = "500px";     // Altura fixa do carrossel
+            container.style.maxWidth = "900px";
             container.style.margin = "0 auto";
-            container.style.backgroundColor = "#f0f0f0";
-            container.style.borderRadius = "10px";
-            container.style.overflow = "hidden";  // Corta imagem se for maior que a caixa
+            container.style.padding = "20px 40px"; // Espaço para os botões laterais
+            container.style.backgroundColor = "#141414"; // Fundo escuro (Estilo Netflix)
+            container.style.borderRadius = "8px";
+            container.style.overflow = "hidden"; // Esconde o que sai da linha
 
-            // --- 2. ELEMENTO DA IMAGEM PRINCIPAL ---
-            const mainImg = document.createElement('img');
-            mainImg.style.width = "100%";
-            mainImg.style.height = "100%";
-            mainImg.style.objectFit = "contain"; // Ajusta a imagem sem cortar (pode usar "cover" para preencher tudo)
-            mainImg.style.transition = "opacity 0.4s ease-in-out";
-            container.appendChild(mainImg);
+            // --- 2. TRILHA DE ROLAGEM (Onde as imagens vivem) ---
+            const track = document.createElement('div');
+            track.style.display = "flex";
+            track.style.gap = "10px";
+            track.style.overflowX = "auto"; // Rolagem horizontal
+            track.style.scrollBehavior = "smooth"; // Rolagem suave
+            track.style.paddingBottom = "10px"; // Espaço para a barra de rolagem (que vamos esconder)
+            track.style.width = "100%";
 
-            // --- 3. CONTROLES (Botões) ---
-            const criarBotao = (texto, posicao) => {
-                const btn = document.createElement('button');
-                btn.innerText = texto;
+            // Esconder a barra de rolagem nativa (estilo app)
+            track.style.scrollbarWidth = "none"; // Firefox
+            track.style.msOverflowStyle = "none"; // IE/Edge
+            const styleSheet = document.createElement("style");
+            styleSheet.innerText = `#${idDestino} ::-webkit-scrollbar { display: none; }`;
+            document.head.appendChild(styleSheet);
+
+            // --- 3. CRIAR AS CARDS (Miniaturas) ---
+            imagens.forEach(file => {
+                const card = document.createElement('div');
+                
+                // Tamanho do Card (Padrão Paisagem 16:9, mas pode ajustar)
+                card.style.minWidth = "200px"; 
+                card.style.height = "113px";  // Proporção 16:9 (Parece banner de série)
+                card.style.flexShrink = "0";  // Impede que o card encolha
+                card.style.borderRadius = "4px";
+                card.style.cursor = "pointer";
+                card.style.transition = "transform 0.3s ease, z-index 0.3s ease";
+                card.style.position = "relative";
+                card.style.overflow = "hidden";
+
+                // Imagem dentro do Card
+                const img = document.createElement('img');
+                img.src = file.download_url;
+                img.style.width = "100%";
+                img.style.height = "100%";
+                img.style.objectFit = "cover"; // Corta a imagem para preencher o quadrado
+
+                // --- EFEITO NETFLIX (HOVER) ---
+                card.onmouseenter = function() {
+                    this.style.transform = "scale(1.2)"; // Aumenta tamanho
+                    this.style.zIndex = "100";         // Vem para frente dos outros
+                    this.style.boxShadow = "0 0 20px rgba(0,0,0,0.8)";
+                    this.style.border = "2px solid #fff";
+                };
+                card.onmouseleave = function() {
+                    this.style.transform = "scale(1)";
+                    this.style.zIndex = "1";
+                    this.style.boxShadow = "none";
+                    this.style.border = "none";
+                };
+
+                // Clique para abrir imagem grande (simples)
+                card.onclick = function() {
+                    window.open(file.download_url, '_blank');
+                };
+
+                card.appendChild(img);
+                track.appendChild(card);
+            });
+
+            container.appendChild(track);
+
+            // --- 4. BOTÕES DE NAVEGAÇÃO (Setas) ---
+            const criarSeta = (lado, posicaoCSS) => {
+                const btn = document.createElement('div');
+                btn.innerHTML = "&#9654"; // Seta Unicode
                 btn.style.position = "absolute";
-                btn.style[posicao] = "20px";
+                btn.style[posicaoCSS] = "10px";
                 btn.style.top = "50%";
-                btn.style.transform = "translateY(-50%)";
-                btn.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
-                btn.style.border = "none";
-                btn.style.borderRadius = "50%";
-                btn.style.width = "50px";
-                btn.style.height = "50px";
-                btn.style.fontSize = "20px";
+                btn.style.transform = `translateY(-50%) ${posicaoCSS === 'left' ? 'rotate(180deg)' : ''}`;
+                btn.style.width = "40px";
+                btn.style.height = "80px";
+                btn.style.backgroundColor = "rgba(0,0,0,0.5)";
+                btn.style.color = "white";
+                btn.style.display = "flex";
+                btn.style.alignItems = "center";
+                btn.style.justifyContent = "center";
                 btn.style.cursor = "pointer";
-                btn.style.zIndex = "10";
-                btn.style.fontWeight = "bold";
-                
-                // Efeito hover
-                btn.onmouseover = function() { this.style.backgroundColor = "white"; };
-                btn.onmouseout = function() { this.style.backgroundColor = "rgba(255, 255, 255, 0.7)"; };
-                
+                btn.style.borderRadius = "4px";
+                btn.style.zIndex = "200";
+                btn.style.transition = "background 0.2s";
+                btn.style.opacity = "0"; // Escondido por padrão
+                btn.style.pointerEvents = "none";
+
+                // Aparece ao passar o mouse no container geral
+                container.onmouseenter = () => {
+                    btn.style.opacity = "1";
+                    btn.style.pointerEvents = "auto";
+                };
+                container.onmouseleave = () => {
+                    btn.style.opacity = "0";
+                    btn.style.pointerEvents = "none";
+                };
+
+                btn.onmouseover = () => btn.style.backgroundColor = "rgba(255,255,255,0.2)";
+                btn.onmouseout = () => btn.style.backgroundColor = "rgba(0,0,0,0.5)";
+
+                btn.onclick = () => {
+                    const scrollAmount = container.clientWidth * 0.8;
+                    if (lado === 'esquerda') track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                    if (lado === 'direita') track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                };
+
                 container.appendChild(btn);
-                return btn;
             };
 
-            const btnPrev = criarBotao("❮", "left");
-            const btnNext = criarBotao("❯", "right");
-
-            // --- 4. LÓGICA DE NAVEGAÇÃO ---
-            let indiceAtual = 0;
-
-            const atualizarImagem = () => {
-                // Efeito de Fade Out -> Troca -> Fade In
-                mainImg.style.opacity = "0";
-                
-                setTimeout(() => {
-                    mainImg.src = imagens[indiceAtual].download_url;
-                    mainImg.onload = () => {
-                        mainImg.style.opacity = "1";
-                    };
-                }, 300); // Espera o tempo da transição de opacidade
-            };
-
-            // Evento Próximo
-            btnNext.onclick = () => {
-                indiceAtual = (indiceAtual + 1) % imagens.length; // Volta pro 0 se chegar no fim
-                atualizarImagem();
-            };
-
-            // Evento Anterior
-            btnPrev.onclick = () => {
-                indiceAtual = (indiceAtual - 1 + imagens.length) % imagens.length; // Vai pro último se estiver no 0
-                atualizarImagem();
-            };
-
-            // --- 5. INICIALIZAÇÃO ---
-            // Carrega a primeira imagem
-            mainImg.src = imagens[0].download_url;
+            criarSeta('esquerda', 'left');
+            criarSeta('direita', 'right');
 
         })
-        .catch(error => console.error('Erro ao carregar carrossel:', error));
+        .catch(error => console.error('Erro ao carregar carrossel Netflix:', error));
 </script></div>
 </body>
 </html>
